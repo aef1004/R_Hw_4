@@ -33,10 +33,20 @@ homicides <- homicides %>%
   unite(col = "location", c("city", "state"), sep = ", ")
 ```
 
+unsolved = closed without arrest or open/no arrest
 ```{r}
- homicides %>%
+library(forcats)
+
+homicides %>%
   select(location, disposition) %>%
+  mutate(disposition = fct_recode(disposition, 
+                                  unsolved = "Closed without arrest")) %>%
+  mutate(disposition = fct_recode(disposition, unsolved = "Open/No arrest")) %>%
   group_by(location, disposition) %>%
-  count()
+  count() 
 ```
+
+
+
+
 
