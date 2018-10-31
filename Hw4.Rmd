@@ -13,6 +13,7 @@ knitr::opts_chunk$set(message = FALSE)
 library(readr)
 library(tidyr)
 library(dplyr)
+library(forcats)
 ```
 
 
@@ -35,18 +36,43 @@ homicides <- homicides %>%
 
 unsolved = closed without arrest or open/no arrest
 ```{r}
-library(forcats)
-
-homicides %>%
+unsolved <- homicides %>%
   select(location, disposition) %>%
   mutate(disposition = fct_recode(disposition, 
                                   unsolved = "Closed without arrest")) %>%
   mutate(disposition = fct_recode(disposition, unsolved = "Open/No arrest")) %>%
   group_by(location, disposition) %>%
   count() 
+
+unsolved
+```
+
+Filter to only Baltimore and then select only the necessary columns (prop.test will only work with a 2D table with 2 columns)
+Need to create new column with only 
+```{r}
+
+Baltime_prop_test <- unsolved %>%
+  filter(location == "Baltimore, MD") 
+
+Baltime_prop_test <- Baltime_prop_test%>%
+  mutate(total = sum(Baltime_prop_test$n))
+
+prop.test(x= Baltime_prop_test$n, n = Baltime_prop_test$total)
 ```
 
 
+```{r}
+library(data.table)
+testing <- data.table(unsolved = 1825,
+           solved = 1002)
 
+testing
+
+prop.test(x = c(1825, 1002), n = c(2827, 2827))
+
+prop.test(x = testing, c(2827, 2827))
+```
+
+  
 
 
