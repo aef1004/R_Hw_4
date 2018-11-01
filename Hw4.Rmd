@@ -37,6 +37,8 @@ homicides <- homicides %>%
 ```
 
 unsolved = closed without arrest or open/no arrest
+
+disposition = unsolved == closed_by_arrest | Open/No arrest
 ```{r}
 unsolved <- homicides %>%
   select(location, disposition) %>%
@@ -47,10 +49,13 @@ unsolved <- homicides %>%
   count() 
 
 unsolved
+
 ```
 
 Filter to only Baltimore and then select only the necessary columns (prop.test will only work with a 2D table with 2 columns)
-Need to create new column with only 
+Need to create new column with only ]
+
+**Try group_by
 ```{r}
 
 Baltimore <- unsolved %>%
@@ -64,18 +69,20 @@ Baltimore_prop_test <- prop.test(x= Baltimore$n, n = Baltimore$total)
 tidy(Baltimore_prop_test)
 ```
 
+**Now use what you learned from running prop.test for one city to run prop.test for all the cities. Your goal is to create the figure shown below, where the points show the estimated proportions of unsolved homicides in each city and the horizontal lines show the estimated 95% confidence intervals. Do this all within a “tidy” pipeline, starting from the unsolved dataframe that you created for step 3. Use map2 from purrr to apply prop.test within each city and then map from purrr to apply tidy to this output. Use the unnest function from the tidyr package on the resulting list-column (from mapping tidy to the prop.test output list-column), with the option .drop = TRUE, to get your estimates back into a regular tidy data frame before plotting.**
 
+Find total numbers by location
 ```{r}
-library(data.table)
-testing <- data.table(unsolved = 1825,
-           solved = 1002)
+library(purrr)
 
-testing
+unsolved %>%
+  group_by(location) %>%
+  mutate(total = sum(n)) 
 
-prop.test(x = c(1825, 1002), n = c(2827, 2827))
-
-prop.test(x = testing, c(2827, 2827))
+  
 ```
+
+
 
   
 
