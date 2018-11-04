@@ -90,7 +90,7 @@ tidy(Baltimore2_prop_test)
 Find total numbers by location
 
 unest will take out numbers to expand to 1 row
-```{r fig.width = 4, fig.height = 7}
+```{r fig.width = 4.5, fig.height = 7}
 
 
 tidy_cities_prop <- unsolved2 %>%
@@ -103,12 +103,14 @@ tidy_cities_prop <- unsolved2 %>%
 
 tidy_cities_prop %>%
 ggplot(aes(estimate, location)) +
-  geom_point() +
+  geom_point( color = "white") +
   geom_errorbarh(aes(xmin = conf.low, 
                      xmax = conf.high, 
-                     height = 0)) +
+                     height = 0),  color = "white") +
+  scale_x_continuous(labels= scales::percent) +
   ggtitle("Unsolved homicides by city", subtitle = "Bars show 95% confidence interval") +
   xlab("Percent of homicdes that are unsolved")+
+  ylab("") +
   theme_dark()
 
 ```
