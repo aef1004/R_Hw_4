@@ -9,6 +9,7 @@ output: word_document
 knitr::opts_chunk$set(message = FALSE)
 ```
 
+Load necessary packages
 ```{r}
 library(readr)
 library(tidyr)
@@ -16,26 +17,23 @@ library(dplyr)
 library(forcats)
 library(broom)
 library(purrr)
-library(tidyr)
 library(ggplot2)
 
 ```
 
-
-```{r}
-list.files("./data/")
-
-```
+Read in homicide csv downloaded from https://github.com/washingtonpost/data-homicides
 
 ```{r}
 homicides <- read_csv("./data/homicide-data.csv")
 ```
 
+See first few lines of data to see what's there
 ```{r}
 head(homicides)
 ```
 
-Remove Tulsa, AL because does not exist
+Unite the city and state columns to make a general location column
+Remove Tulsa, AL because does not exist and skews data
 ```{r}
 
 homicides <- homicides %>%
@@ -52,7 +50,6 @@ disposition = unsolved == closed_by_arrest | Open/No arrest
 Make a True/False column
 Use summarize n = sum of logical vector
 
-Myabe cleanup tulse
 ```{r}
 unsolved2 <- homicides %>%
   select(location, disposition) %>%
@@ -60,10 +57,7 @@ unsolved2 <- homicides %>%
   group_by(location) %>%
   summarise(sum = n(), unsolved = sum(unsolved))
 
-unsolved2
-
-
-
+head(unsolved2)
 
 ```
 
