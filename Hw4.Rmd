@@ -2,7 +2,7 @@
 title: "Hw4"
 author: "Amy Fox"
 date: "October 24, 2018"
-output: word_document
+output: pdf_document
 ---
 
 ```{r}
@@ -58,7 +58,7 @@ unsolved_df <- homicides %>%
   group_by(location) %>%
   summarise(total_cases = n(), unsolved = sum(unsolved))
 
-head(unsolved2)
+head(unsolved_df)
 
 ```
 
