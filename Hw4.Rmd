@@ -15,12 +15,15 @@ library(tidyr)
 library(dplyr)
 library(forcats)
 library(broom)
+library(tidyr)
+library(ggplot2)
 
 ```
 
 
 ```{r}
 list.files("./data/")
+
 ```
 
 ```{r}
@@ -31,56 +34,85 @@ homicides <- read_csv("./data/homicide-data.csv")
 head(homicides)
 ```
 
+Remove Tulsa, AL because does not exist
 ```{r}
+
 homicides <- homicides %>%
-  unite(col = "location", c("city", "state"), sep = ", ")
+  unite(col = "location", c("city", "state"),
+        sep = ", ") %>%
+  filter(location !="Tulsa, AL")
+
 ```
 
 unsolved = closed without arrest or open/no arrest
 
 disposition = unsolved == closed_by_arrest | Open/No arrest
-```{r}
-unsolved <- homicides %>%
-  select(location, disposition) %>%
-  mutate(disposition = fct_recode(disposition, 
-                                  unsolved = "Closed without arrest")) %>%
-  mutate(disposition = fct_recode(disposition, unsolved = "Open/No arrest")) %>%
-  group_by(location, disposition) %>%
-  count() 
 
-unsolved
+Make a True/False column
+Use summarize n = sum of logical vector
+
+Myabe cleanup tulse
+```{r}
+unsolved2 <- homicides %>%
+  select(location, disposition) %>%
+  mutate(unsolved = disposition != "Closed by arrest") %>%
+  group_by(location) %>%
+  summarise(sum = n(), unsolved = sum(unsolved))
+
+unsolved2
+
+
+
 
 ```
+
 
 Filter to only Baltimore and then select only the necessary columns (prop.test will only work with a 2D table with 2 columns)
 Need to create new column with only ]
 
-**Try group_by
 ```{r}
+Baltimore2 <- unsolved2 %>%
+  filter(location == "Baltimore, MD")
 
-Baltimore <- unsolved %>%
-  filter(location == "Baltimore, MD") 
 
-Baltimore <- Baltimore%>%
-  mutate(total = sum(Baltimore$n))
+Baltimore2
 
-Baltimore_prop_test <- prop.test(x= Baltimore$n, n = Baltimore$total)
+Baltimore2_prop_test <- prop.test(x= Baltimore2$unsolved, 
+                                  n = Baltimore2$sum)
 
-tidy(Baltimore_prop_test)
+tidy(Baltimore2_prop_test)
 ```
+
 
 **Now use what you learned from running prop.test for one city to run prop.test for all the cities. Your goal is to create the figure shown below, where the points show the estimated proportions of unsolved homicides in each city and the horizontal lines show the estimated 95% confidence intervals. Do this all within a “tidy” pipeline, starting from the unsolved dataframe that you created for step 3. Use map2 from purrr to apply prop.test within each city and then map from purrr to apply tidy to this output. Use the unnest function from the tidyr package on the resulting list-column (from mapping tidy to the prop.test output list-column), with the option .drop = TRUE, to get your estimates back into a regular tidy data frame before plotting.**
 
 Find total numbers by location
-```{r}
-library(purrr)
 
-unsolved %>%
-  group_by(location) %>%
-  mutate(total = sum(n)) 
+unest will take out numbers to expand to 1 row
+```{r fig.width = 4, fig.height = 7}
 
+a<- unsolved2 %>%
+  mutate(my_prop_test = map2(unsolved, sum, prop.test),
+         tidy_prop_test = map(my_prop_test, tidy)) %>%
+  unnest(tidy_prop_test, .drop = TRUE) %>%
+  arrange(desc(estimate)) %>%
   
+
+a
+
+a %>%
+ggplot(aes(estimate, location)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = conf.low, 
+                     xmax = conf.high, 
+                     height = 0)) +
+  ggtitle("Unsolved homicides by city", subtitle = "Bars show 95% confidence interval") +
+  xlab("Percent of homicdes that are unsolved")+
+  theme_dark()
+
 ```
+
+
 
 
 
