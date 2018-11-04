@@ -43,39 +43,37 @@ homicides <- homicides %>%
 
 ```
 
-unsolved = closed without arrest or open/no arrest
+**Key for myself**
+**unsolved = closed without arrest or open/no arrest**
 
-disposition = unsolved == closed_by_arrest | Open/No arrest
-
-Make a True/False column
-Use summarize n = sum of logical vector
+Create new dataframe with unsolved cases info
+Select only necessary columns
+Make a new True/False column for unsolved cases
+Group by the location and summarize the number of unsolved and the total cases
 
 ```{r}
-unsolved2 <- homicides %>%
+unsolved_df <- homicides %>%
   select(location, disposition) %>%
   mutate(unsolved = disposition != "Closed by arrest") %>%
   group_by(location) %>%
-  summarise(sum = n(), unsolved = sum(unsolved))
+  summarise(total_cases = n(), unsolved = sum(unsolved))
 
 head(unsolved2)
 
 ```
 
-
-Filter to only Baltimore and then select only the necessary columns (prop.test will only work with a 2D table with 2 columns)
-Need to create new column with only ]
+Create new dataframe with only data for Baltimore
+Perform proportion test on Baltimore cases
+Tidy prop_test data 
 
 ```{r}
-Baltimore2 <- unsolved2 %>%
+Baltimore_df <- unsolved_df %>%
   filter(location == "Baltimore, MD")
 
+Baltimore_prop_test <- prop.test(x= Baltimore_df$unsolved, 
+                                  n = Baltimore_df$total_cases)
 
-Baltimore2
-
-Baltimore2_prop_test <- prop.test(x= Baltimore2$unsolved, 
-                                  n = Baltimore2$sum)
-
-tidy(Baltimore2_prop_test)
+tidy(Baltimore_prop_test)
 ```
 
 
