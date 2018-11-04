@@ -1,8 +1,8 @@
 ---
-title: "Hw4"
+title: "R Programming Hw4"
 author: "Amy Fox"
 date: "October 24, 2018"
-output: pdf_document
+output: word_document
 ---
 
 ```{r}
@@ -21,7 +21,7 @@ library(ggplot2)
 
 ```
 
-Read in homicide csv downloaded from https://github.com/washingtonpost/data-homicides
+Read in homicide csv
 
 ```{r}
 homicides <- read_csv("./data/homicide-data.csv")
@@ -32,7 +32,7 @@ See first few lines of data to see what's there
 head(homicides)
 ```
 
-Unite the city and state columns to make a general location column
+Unite the city and state columns to make a general location column   
 Remove Tulsa, AL because does not exist and skews data
 ```{r}
 
@@ -43,13 +43,13 @@ homicides <- homicides %>%
 
 ```
 
-**Key for myself**
-**unsolved = closed without arrest or open/no arrest**
+*Key for myself*  
+*unsolved = closed without arrest or open/no arrest*
 
-Create new dataframe with unsolved cases info
-Select only necessary columns
-Make a new True/False column for unsolved cases
-Group by the location and summarize the number of unsolved and the total cases
+Create new dataframe with unsolved cases info  
+Select only necessary columns  
+Make a new True/False column for unsolved cases  
+Group by the location and summarize the number of unsolved and the total cases  
 
 ```{r}
 unsolved_df <- homicides %>%
@@ -62,8 +62,8 @@ head(unsolved_df)
 
 ```
 
-Create new dataframe with only data for Baltimore
-Perform proportion test on Baltimore cases
+Create new dataframe with only data for Baltimore  
+Perform proportion test on Baltimore cases  
 Tidy prop_test data 
 
 ```{r}
@@ -86,14 +86,14 @@ tidied_Baltimore_prop_test$conf.low
 tidied_Baltimore_prop_test$conf.high
 ```
 
-Create new column with prop.test of each city using map2
-Create new column with tidied proptest data
-Unnest data --> tidy data from list to df
-Reorder location by estimate
-
-Plot cities according to the estimate for unsolved cases showing the 95% confidence interval
-Change x axis from decimal to percent
-Add labels
+Create new column with prop.test of each city using map2  
+Create new column with tidied proptest data  
+Unnest data --> tidy data from list to df  
+Reorder location by estimate  
+  
+Plot cities according to the estimate for unsolved cases showing the 95% confidence interval  
+Change x axis from decimal to percent  
+Add labels  
 
 ```{r fig.width = 4.5, fig.height = 7}
 
