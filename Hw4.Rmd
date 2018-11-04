@@ -78,6 +78,7 @@ Baltimore_prop_test
 
 # print tidied prop.test
 tidied_Baltimore_prop_test <- tidy(Baltimore_prop_test)
+tidied_Baltimore_prop_test
 
 #pull out estimate proportion and confidence intervals
 tidied_Baltimore_prop_test$estimate
@@ -87,7 +88,7 @@ tidied_Baltimore_prop_test$conf.high
 
 Create new column with prop.test of each city using map2
 Create new column with tidied proptest data
-Unnest data to expand
+Unnest data --> tidy data from list to df
 Reorder location by estimate
 
 Plot cities according to the estimate for unsolved cases showing the 95% confidence interval
