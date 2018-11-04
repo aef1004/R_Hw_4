@@ -15,6 +15,7 @@ library(tidyr)
 library(dplyr)
 library(forcats)
 library(broom)
+library(purrr)
 library(tidyr)
 library(ggplot2)
 
@@ -91,16 +92,16 @@ Find total numbers by location
 unest will take out numbers to expand to 1 row
 ```{r fig.width = 4, fig.height = 7}
 
-a<- unsolved2 %>%
+
+tidy_cities_prop <- unsolved2 %>%
   mutate(my_prop_test = map2(unsolved, sum, prop.test),
          tidy_prop_test = map(my_prop_test, tidy)) %>%
   unnest(tidy_prop_test, .drop = TRUE) %>%
   arrange(desc(estimate)) %>%
+  mutate(location = factor(location, levels = location[order(estimate)]))
   
 
-a
-
-a %>%
+tidy_cities_prop %>%
 ggplot(aes(estimate, location)) +
   geom_point() +
   geom_errorbarh(aes(xmin = conf.low, 
