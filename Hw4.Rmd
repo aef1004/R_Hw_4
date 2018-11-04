@@ -73,23 +73,33 @@ Baltimore_df <- unsolved_df %>%
 Baltimore_prop_test <- prop.test(x= Baltimore_df$unsolved, 
                                   n = Baltimore_df$total_cases)
 
-tidy(Baltimore_prop_test)
+#print output of prop.test
+Baltimore_prop_test
+
+# print tidied prop.test
+tidied_Baltimore_prop_test <- tidy(Baltimore_prop_test)
+
+#pull out estimate proportion and confidence intervals
+tidied_Baltimore_prop_test$estimate
+tidied_Baltimore_prop_test$conf.low
+tidied_Baltimore_prop_test$conf.high
 ```
 
+Create new column with prop.test of each city using map2
+Create new column with tidied proptest data
+Unnest data to expand
+Reorder location by estimate
 
-**Now use what you learned from running prop.test for one city to run prop.test for all the cities. Your goal is to create the figure shown below, where the points show the estimated proportions of unsolved homicides in each city and the horizontal lines show the estimated 95% confidence intervals. Do this all within a “tidy” pipeline, starting from the unsolved dataframe that you created for step 3. Use map2 from purrr to apply prop.test within each city and then map from purrr to apply tidy to this output. Use the unnest function from the tidyr package on the resulting list-column (from mapping tidy to the prop.test output list-column), with the option .drop = TRUE, to get your estimates back into a regular tidy data frame before plotting.**
+Plot cities according to the estimate for unsolved cases showing the 95% confidence interval
+Change x axis from decimal to percent
+Add labels
 
-Find total numbers by location
-
-unest will take out numbers to expand to 1 row
 ```{r fig.width = 4.5, fig.height = 7}
 
-
-tidy_cities_prop <- unsolved2 %>%
-  mutate(my_prop_test = map2(unsolved, sum, prop.test),
+tidy_cities_prop <- unsolved_df %>%
+  mutate(my_prop_test = map2(unsolved, total_cases, prop.test),
          tidy_prop_test = map(my_prop_test, tidy)) %>%
   unnest(tidy_prop_test, .drop = TRUE) %>%
-  arrange(desc(estimate)) %>%
   mutate(location = factor(location, levels = location[order(estimate)]))
   
 
