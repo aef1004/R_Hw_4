@@ -2,7 +2,9 @@
 title: "R Programming Hw4"
 author: "Amy Fox"
 date: "October 24, 2018"
-output: word_document
+output: 
+  pdf_document:
+        keep_tex: true
 ---
 
 ```{r}
@@ -18,13 +20,14 @@ library(forcats)
 library(broom)
 library(purrr)
 library(ggplot2)
+library(knitr)
 
 ```
 
 Read in homicide csv
 
 ```{r}
-homicides <- read_csv("./data/homicide-data.csv")
+homicides <- read_csv("../data/homicide-data.csv")
 ```
 
 See first few lines of data to see what's there
@@ -95,7 +98,9 @@ Plot cities according to the estimate for unsolved cases showing the 95% confide
 Change x axis from decimal to percent  
 Add labels  
 
-```{r fig.width = 4.5, fig.height = 7}
+(Must change fig.width to fig_width for PDF)
+
+```{r fig.width = 4, fig.height = 9}
 
 tidy_cities_prop <- unsolved_df %>%
   mutate(my_prop_test = map2(unsolved, total_cases, prop.test),
@@ -106,7 +111,7 @@ tidy_cities_prop <- unsolved_df %>%
 
 tidy_cities_prop %>%
 ggplot(aes(estimate, location)) +
-  geom_point( color = "white") +
+  geom_point(color = "white") +
   geom_errorbarh(aes(xmin = conf.low, 
                      xmax = conf.high, 
                      height = 0),  color = "white") +
@@ -117,11 +122,4 @@ ggplot(aes(estimate, location)) +
   theme_dark()
 
 ```
-
-
-
-
-
-  
-
 
